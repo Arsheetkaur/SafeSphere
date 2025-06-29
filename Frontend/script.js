@@ -250,7 +250,9 @@ class SafeSphereApp {
 
   async loadWeatherData(lat, lon) {
     try {
+      console.log('Loading weather data for:', lat, lon);
       this.weatherData = await api.getWeatherData(lat, lon);
+      console.log('Weather data received:', this.weatherData);
       this.renderWeatherCard();
       this.updateWeatherMarker(lat, lon);
     } catch (error) {
@@ -433,8 +435,10 @@ class SafeSphereApp {
 
   renderWeatherCard() {
     const weatherCard = document.getElementById('weatherCard');
+    console.log('Rendering weather card with data:', this.weatherData);
     
     if (!this.weatherData || this.weatherData.error) {
+      console.log('No weather data or error, showing unavailable message');
       weatherCard.innerHTML = `
         <div style="text-align: center; opacity: 0.7;">
           <i class="fas fa-cloud-slash" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
@@ -445,18 +449,29 @@ class SafeSphereApp {
     }
 
     const weather = this.weatherData;
+    
+    // Handle both backend format and OpenWeatherMap format
+    const temp = weather.temperature || (weather.main && weather.main.temp);
+    const humidity = weather.humidity || (weather.main && weather.main.humidity);
+    const pressure = weather.pressure || (weather.main && weather.main.pressure);
+    const windSpeed = weather.wind_speed || (weather.wind && weather.wind.speed);
+    const description = weather.description || (weather.weather && weather.weather[0] && weather.weather[0].description);
+    const condition = weather.description || (weather.weather && weather.weather[0] && weather.weather[0].main);
+    
+    console.log('Weather data processed:', { temp, humidity, pressure, windSpeed, description, condition });
+    
     weatherCard.innerHTML = `
       <div class="weather-info">
         <div class="weather-icon">
-          <i class="fas fa-${this.getWeatherIcon(weather.weather[0].main)}"></i>
+          <i class="fas fa-${this.getWeatherIcon(condition)}"></i>
         </div>
-        <div class="weather-temp">${Math.round(weather.main.temp)}°C</div>
+        <div class="weather-temp">${Math.round(temp)}°C</div>
       </div>
       <div class="weather-details">
-        <div>Humidity: ${weather.main.humidity}%</div>
-        <div>Wind: ${weather.wind.speed} m/s</div>
-        <div>Pressure: ${weather.main.pressure} hPa</div>
-        <div>Visibility: ${weather.visibility / 1000} km</div>
+        <div>Humidity: ${humidity}%</div>
+        <div>Wind: ${windSpeed} m/s</div>
+        <div>Pressure: ${pressure} hPa</div>
+        <div>Condition: ${description}</div>
       </div>
     `;
   }
@@ -533,11 +548,16 @@ class SafeSphereApp {
     }).addTo(this.map);
 
     if (this.weatherData) {
+      // Handle both backend format and OpenWeatherMap format
+      const temp = this.weatherData.temperature || (this.weatherData.main && this.weatherData.main.temp);
+      const description = this.weatherData.description || (this.weatherData.weather && this.weatherData.weather[0] && this.weatherData.weather[0].description);
+      const humidity = this.weatherData.humidity || (this.weatherData.main && this.weatherData.main.humidity);
+      
       this.markers.weather.bindPopup(`
         <h3>Current Weather</h3>
-        <p>Temperature: ${Math.round(this.weatherData.main.temp)}°C</p>
-        <p>Condition: ${this.weatherData.weather[0].description}</p>
-        <p>Humidity: ${this.weatherData.main.humidity}%</p>
+        <p>Temperature: ${Math.round(temp)}°C</p>
+        <p>Condition: ${description}</p>
+        <p>Humidity: ${humidity}%</p>
       `);
     }
   }
@@ -679,6 +699,30 @@ class SafeSphereApp {
   }
 
   getWeatherIcon(condition) {
+    if (!condition) return 'cloud';
+    
+    // Convert description to condition for icon mapping
+    const conditionLower = condition.toLowerCase();
+    
+    if (conditionLower.includes('clear') || conditionLower.includes('sun')) {
+      return 'sun';
+    } else if (conditionLower.includes('cloud')) {
+      return 'cloud';
+    } else if (conditionLower.includes('rain')) {
+      return 'cloud-rain';
+    } else if (conditionLower.includes('snow')) {
+      return 'snowflake';
+    } else if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+      return 'bolt';
+    } else if (conditionLower.includes('drizzle')) {
+      return 'cloud-drizzle';
+    } else if (conditionLower.includes('mist') || conditionLower.includes('fog') || conditionLower.includes('haze')) {
+      return 'smog';
+    } else if (conditionLower.includes('wind')) {
+      return 'wind';
+    }
+    
+    // Fallback to original mapping for OpenWeatherMap format
     const icons = {
       Clear: 'sun',
       Clouds: 'cloud',
