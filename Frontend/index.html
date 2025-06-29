@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeSphere - Weather & Friend Safety Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <h1>SafeSphere</h1>
+      </div>
+      
+      <div class="safety-status">
+        <h3>Safety Overview</h3>
+        <div class="status-indicator">
+          <div class="status-dot safe"></div>
+          <span>All friends are safe</span>
+        </div>
+      </div>
+      
+      <div class="friends-list">
+        <h3>Friends & Family</h3>
+        <div id="friendsList"></div>
+      </div>
+      
+      <div class="location-controls">
+        <h3>Important Locations</h3>
+        <button id="addLocationBtn" class="add-btn">
+          <i class="fas fa-plus"></i> Add Location
+        </button>
+        <div id="locationsList"></div>
+      </div>
+    </div>
+    
+    <!-- Main Map Area -->
+    <div id="map"></div>
+    
+    <!-- Emergency Panel -->
+    <div class="emergency-panel">
+      <button id="safeBtn" class="emergency-btn safe">
+        <i class="fas fa-check-circle"></i> I'm Safe
+      </button>
+      <button id="alertBtn" class="emergency-btn alert">
+        <i class="fas fa-bell"></i> Alert Contacts
+      </button>
+    </div>
+    
+    <!-- Layer Controls -->
+    <div class="layer-controls">
+      <h4>Map Layers</h4>
+      <div class="layer-option">
+        <input type="checkbox" id="weatherLayer" checked>
+        <label for="weatherLayer">Weather Radar</label>
+      </div>
+      <div class="layer-option">
+        <input type="checkbox" id="friendsLayer" checked>
+        <label for="friendsLayer">Friends</label>
+      </div>
+      <div class="layer-option">
+        <input type="checkbox" id="locationsLayer" checked>
+        <label for="locationsLayer">Important Locations</label>
+      </div>
+    </div>
+    
+    <!-- Add Location Modal (hidden by default) -->
+    <div id="locationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Add Important Location</h2>
+        <form id="locationForm">
+          <div class="form-group">
+            <label for="locationName">Name</label>
+            <input type="text" id="locationName" required>
+          </div>
+          <div class="form-group">
+            <label for="locationType">Type</label>
+            <select id="locationType" required>
+              <option value="home">Home</option>
+              <option value="office">Office</option>
+              <option value="school">School</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Coordinates</label>
+            <div class="coord-inputs">
+              <input type="number" id="locationLat" placeholder="Latitude" step="any" required>
+              <input type="number" id="locationLng" placeholder="Longitude" step="any" required>
+              <button type="button" id="getLocationBtn" class="icon-btn">
+                <i class="fas fa-location-arrow"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">Save Location</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
