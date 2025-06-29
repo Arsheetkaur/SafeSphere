@@ -5,14 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafeSphere - Two-Way Communication Demo</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
   <style>
+    /* Added background styles */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+      color: white;
+    }
+    
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcm0zMDktYWV3LTAxM18xXzEuanBn.jpg') no-repeat center center;
+      background-size: cover;
+      filter: blur(8px) brightness(0.6);
+      transform: scale(1.02);
+    }
+    
     .demo-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      position: relative;
+      background: rgba(0, 0, 0, 0.4); /* Added dark overlay */
     }
-    
+
+    /* Rest of your original styles EXACTLY as they were */
     .demo-header {
       text-align: center;
       margin-bottom: 3rem;
@@ -21,7 +45,7 @@
     .demo-header h1 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
-      background: linear-gradient(45deg, #4CAF50, #45a049);
+      background: linear-gradient(45deg, #24094a, #d3bbff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -40,7 +64,7 @@
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      color: #4CAF50;
+      color: linear-gradient(45deg, #24094a, #d3bbff);
     }
     
     .user-cards {
@@ -74,7 +98,7 @@
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: linear-gradient(45deg, #4CAF50, #45a049);
+      background: linear-gradient(45deg, #000000, #412a6e);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -166,7 +190,7 @@
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      color: #4CAF50;
+      color: linear-gradient(45deg, #24094a, #d3bbff);
     }
     
     .notification-list {
@@ -207,7 +231,7 @@
       font-size: 1.3rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      color: #4CAF50;
+      color: linear-gradient(45deg, #a569fb, #ece2ff);
     }
     
     .instructions-list {
@@ -226,13 +250,16 @@
     
     .instructions-list li::before {
       content: "•";
-      color: #4CAF50;
+      color:linear-gradient(45deg, #24094a, #d3bbff);
       font-weight: bold;
       margin-right: 0.5rem;
     }
   </style>
 </head>
 <body>
+  <!-- Added background element -->
+  <div class="background"></div>
+  
   <div class="demo-container">
     <div class="demo-header">
       <h1><i class="fas fa-shield-alt"></i> SafeSphere Two-Way Communication Demo</h1>
@@ -349,7 +376,7 @@
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
         <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
-          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Authentication</h4>
+          <h4 style="color: #ccbbff; margin-bottom: 0.5rem;">Authentication</h4>
           <ul style="font-size: 0.9rem; opacity: 0.8;">
             <li>POST /auth/register - Create account</li>
             <li>POST /auth/login - Login</li>
@@ -359,7 +386,7 @@
         </div>
         
         <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
-          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Friend Management</h4>
+          <h4 style="color: #ccbbff; margin-bottom: 0.5rem;">Friend Management</h4>
           <ul style="font-size: 0.9rem; opacity: 0.8;">
             <li>POST /friends/request - Send friend request</li>
             <li>GET /friends/requests - Get pending requests</li>
@@ -369,7 +396,7 @@
         </div>
         
         <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
-          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Emergency Features</h4>
+          <h4 style="color: #ccbbff; margin-bottom: 0.5rem;">Emergency Features</h4>
           <ul style="font-size: 0.9rem; opacity: 0.8;">
             <li>POST /emergency/safe/{id} - Mark as safe</li>
             <li>POST /emergency/alert/{id} - Send alert</li>
@@ -448,4 +475,4 @@
     }, 4000);
   </script>
 </body>
-</html> 
+</html>
