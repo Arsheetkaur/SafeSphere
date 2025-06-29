@@ -1,0 +1,22 @@
+# Database Configuration
+DATABASE_URL=sqlite:///./safesphere.db
+
+# API Keys (All Free - No Credit Card Required)
+OPENWEATHER_API_KEY=your_openweather_api_key_here
+# USGS API is free without key for basic usage
+# MAPBOX_API_KEY=optional_only_if_you_have_credit_card
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+DEBUG=True
+
+# CORS Settings
+ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:5500
+
+# Cache Settings
+WEATHER_CACHE_DURATION=1800  # 30 minutes in seconds
+DISASTER_CACHE_DURATION=3600  # 1 hour in seconds
+
+# Map Configuration (Free Options)
+MAP_PROVIDER=openstreetmap  # openstreetmap, google (if you get free API key) 

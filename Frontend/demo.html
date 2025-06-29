@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeSphere - Two-Way Communication Demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .demo-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .demo-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .demo-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .demo-scenario {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .scenario-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #4CAF50;
+    }
+    
+    .user-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .user-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .user-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: white;
+      font-size: 1.2rem;
+    }
+    
+    .user-info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    
+    .user-status {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-dot.safe { background: #4CAF50; }
+    .status-dot.alert { background: #f39c12; }
+    .status-dot.danger { background: #f44336; }
+    
+    .user-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+    }
+    
+    .btn-warning {
+      background: linear-gradient(45deg, #f39c12, #e67e22);
+      color: white;
+    }
+    
+    .btn-danger {
+      background: linear-gradient(45deg, #f44336, #d32f2f);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .notification-panel {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .notification-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #4CAF50;
+    }
+    
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .notification-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .notification-item.alert {
+      border-left-color: #f39c12;
+    }
+    
+    .notification-item.danger {
+      border-left-color: #f44336;
+    }
+    
+    .notification-time {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    
+    .demo-instructions {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .instructions-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #4CAF50;
+    }
+    
+    .instructions-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .instructions-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .instructions-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .instructions-list li::before {
+      content: "•";
+      color: #4CAF50;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1><i class="fas fa-shield-alt"></i> SafeSphere Two-Way Communication Demo</h1>
+      <p>See how friends can communicate their safety status in real-time</p>
+    </div>
+    
+    <div class="demo-instructions">
+      <div class="instructions-title">How Two-Way Communication Works:</div>
+      <ul class="instructions-list">
+        <li><strong>User Registration:</strong> Each friend creates their own account with email/password</li>
+        <li><strong>Friend Requests:</strong> Users can send friend requests to other users by email</li>
+        <li><strong>Safety Status Updates:</strong> Each user can update their own safety status (Safe/Alert/Danger)</li>
+        <li><strong>Real-time Notifications:</strong> When a friend's status changes, all their friends are notified</li>
+        <li><strong>Emergency Alerts:</strong> Users can send emergency alerts to all their contacts</li>
+        <li><strong>Location Sharing:</strong> Users can share their location and see friends on the map</li>
+      </ul>
+    </div>
+    
+    <div class="demo-scenario">
+      <div class="scenario-title">Scenario: Emergency Situation</div>
+      <p>In this demo, we'll show how three friends (Alice, Bob, and Charlie) communicate during an emergency:</p>
+      
+      <div class="user-cards">
+        <div class="user-card" id="alice-card">
+          <div class="user-header">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+              <h3>Alice</h3>
+              <div class="user-status">alice@example.com</div>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot safe"></div>
+            <span>Status: Safe</span>
+          </div>
+          <div class="user-actions">
+            <button class="btn btn-primary" onclick="updateUserStatus('alice', 'safe')">
+              <i class="fas fa-check-circle"></i> I'm Safe
+            </button>
+            <button class="btn btn-warning" onclick="updateUserStatus('alice', 'alert')">
+              <i class="fas fa-exclamation-triangle"></i> Need Help
+            </button>
+            <button class="btn btn-danger" onclick="updateUserStatus('alice', 'danger')">
+              <i class="fas fa-exclamation-circle"></i> Emergency
+            </button>
+          </div>
+        </div>
+        
+        <div class="user-card" id="bob-card">
+          <div class="user-header">
+            <div class="user-avatar">B</div>
+            <div class="user-info">
+              <h3>Bob</h3>
+              <div class="user-status">bob@example.com</div>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot safe"></div>
+            <span>Status: Safe</span>
+          </div>
+          <div class="user-actions">
+            <button class="btn btn-primary" onclick="updateUserStatus('bob', 'safe')">
+              <i class="fas fa-check-circle"></i> I'm Safe
+            </button>
+            <button class="btn btn-warning" onclick="updateUserStatus('bob', 'alert')">
+              <i class="fas fa-exclamation-triangle"></i> Need Help
+            </button>
+            <button class="btn btn-danger" onclick="updateUserStatus('bob', 'danger')">
+              <i class="fas fa-exclamation-circle"></i> Emergency
+            </button>
+          </div>
+        </div>
+        
+        <div class="user-card" id="charlie-card">
+          <div class="user-header">
+            <div class="user-avatar">C</div>
+            <div class="user-info">
+              <h3>Charlie</h3>
+              <div class="user-status">charlie@example.com</div>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot safe"></div>
+            <span>Status: Safe</span>
+          </div>
+          <div class="user-actions">
+            <button class="btn btn-primary" onclick="updateUserStatus('charlie', 'safe')">
+              <i class="fas fa-check-circle"></i> I'm Safe
+            </button>
+            <button class="btn btn-warning" onclick="updateUserStatus('charlie', 'alert')">
+              <i class="fas fa-exclamation-triangle"></i> Need Help
+            </button>
+            <button class="btn btn-danger" onclick="updateUserStatus('charlie', 'danger')">
+              <i class="fas fa-exclamation-circle"></i> Emergency
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="notification-panel">
+        <div class="notification-title">Real-time Notifications</div>
+        <div class="notification-list" id="notificationList">
+          <div class="notification-item">
+            <div><strong>System:</strong> Demo started. All users are safe.</div>
+            <div class="notification-time">Just now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-scenario">
+      <div class="scenario-title">Backend API Endpoints</div>
+      <p>The following API endpoints enable two-way communication:</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
+          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Authentication</h4>
+          <ul style="font-size: 0.9rem; opacity: 0.8;">
+            <li>POST /auth/register - Create account</li>
+            <li>POST /auth/login - Login</li>
+            <li>POST /auth/logout - Logout</li>
+            <li>GET /users/profile - Get user profile</li>
+          </ul>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
+          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Friend Management</h4>
+          <ul style="font-size: 0.9rem; opacity: 0.8;">
+            <li>POST /friends/request - Send friend request</li>
+            <li>GET /friends/requests - Get pending requests</li>
+            <li>POST /friends/request/{id}/accept - Accept request</li>
+            <li>GET /friends/ - Get friends list</li>
+          </ul>
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
+          <h4 style="color: #4CAF50; margin-bottom: 0.5rem;">Emergency Features</h4>
+          <ul style="font-size: 0.9rem; opacity: 0.8;">
+            <li>POST /emergency/safe/{id} - Mark as safe</li>
+            <li>POST /emergency/alert/{id} - Send alert</li>
+            <li>POST /emergency/danger/{id} - Mark as danger</li>
+            <li>GET /emergency/alerts - Get alerts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 3rem;">
+      <a href="index.html" class="btn btn-primary" style="text-decoration: none; padding: 1rem 2rem; font-size: 1.1rem;">
+        <i class="fas fa-arrow-left"></i> Back to Main App
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const users = {
+      alice: { name: 'Alice', status: 'safe' },
+      bob: { name: 'Bob', status: 'safe' },
+      charlie: { name: 'Charlie', status: 'safe' }
+    };
+    
+    function updateUserStatus(userId, status) {
+      const user = users[userId];
+      const card = document.getElementById(`${userId}-card`);
+      const statusDot = card.querySelector('.status-dot');
+      const statusText = card.querySelector('.status-indicator span');
+      
+      // Update user status
+      user.status = status;
+      
+      // Update UI
+      statusDot.className = `status-dot ${status}`;
+      statusText.textContent = `Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+      
+      // Add notification
+      addNotification(`${user.name} updated their status to ${status.toUpperCase()}`);
+      
+      // Simulate friend notifications
+      if (status === 'alert' || status === 'danger') {
+        setTimeout(() => {
+          addNotification(`⚠️ ${user.name} needs attention!`, status);
+        }, 1000);
+      }
+    }
+    
+    function addNotification(message, type = 'info') {
+      const notificationList = document.getElementById('notificationList');
+      const notification = document.createElement('div');
+      notification.className = `notification-item ${type}`;
+      
+      const time = new Date().toLocaleTimeString();
+      notification.innerHTML = `
+        <div><strong>${message}</strong></div>
+        <div class="notification-time">${time}</div>
+      `;
+      
+      notificationList.appendChild(notification);
+      notificationList.scrollTop = notificationList.scrollHeight;
+      
+      // Remove old notifications if too many
+      if (notificationList.children.length > 10) {
+        notificationList.removeChild(notificationList.firstChild);
+      }
+    }
+    
+    // Simulate some activity
+    setTimeout(() => {
+      addNotification('Alice and Bob are now friends');
+    }, 2000);
+    
+    setTimeout(() => {
+      addNotification('Charlie joined the network');
+    }, 4000);
+  </script>
+</body>
+</html> 

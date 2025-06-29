@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeSphere - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .auth-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 3rem;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .auth-header .logo {
+      font-size: 3rem;
+      color: #4CAF50;
+      margin-bottom: 1rem;
+    }
+    
+    .auth-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .auth-header p {
+      opacity: 0.8;
+      font-size: 1rem;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 0.25rem;
+    }
+    
+    .auth-tab {
+      flex: 1;
+      padding: 0.75rem;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .auth-tab.active {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .auth-tab:not(.active) {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .auth-tab:not(.active):hover {
+      color: white;
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .error-message {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      color: #f44336;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    
+    .success-message {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      color: #4CAF50;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    
+    .location-consent {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .location-consent label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    
+    .location-consent input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1>SafeSphere</h1>
+        <p>Stay connected with your loved ones</p>
+      </div>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Login</div>
+        <div class="auth-tab" data-tab="register">Register</div>
+      </div>
+      
+      <!-- Error/Success Messages -->
+      <div class="error-message" id="errorMessage"></div>
+      <div class="success-message" id="successMessage"></div>
+      
+      <!-- Login Form -->
+      <form class="auth-form active" id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="submit-btn" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+      
+      <!-- Register Form -->
+      <form class="auth-form" id="registerForm">
+        <div class="form-group">
+          <label for="registerName">Full Name</label>
+          <input type="text" id="registerName" required>
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">Email</label>
+          <input type="email" id="registerEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPhone">Phone (optional)</label>
+          <input type="tel" id="registerPhone">
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" required>
+        </div>
+        <div class="form-group">
+          <label for="registerConfirmPassword">Confirm Password</label>
+          <input type="password" id="registerConfirmPassword" required>
+        </div>
+        <div class="location-consent">
+          <label>
+            <input type="checkbox" id="locationConsent">
+            <span>Allow location access for emergency features</span>
+          </label>
+        </div>
+        <button type="submit" class="submit-btn" id="registerBtn">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="api.js"></script>
+  <script type="module">
+    import * as api from './api.js';
+    
+    class AuthApp {
+      constructor() {
+        this.currentTab = 'login';
+        this.init();
+      }
+      
+      init() {
+        this.initTabs();
+        this.initForms();
+        this.checkExistingSession();
+      }
+      
+      initTabs() {
+        const tabs = document.querySelectorAll('.auth-tab');
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            this.switchTab(tab.dataset.tab);
+          });
+        });
+      }
+      
+      switchTab(tabName) {
+        this.currentTab = tabName;
+        
+        // Update tab buttons
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+          tab.classList.toggle('active', tab.dataset.tab === tabName);
+        });
+        
+        // Update forms
+        document.querySelectorAll('.auth-form').forEach(form => {
+          form.classList.toggle('active', form.id === `${tabName}Form`);
+        });
+        
+        // Clear messages
+        this.hideMessages();
+      }
+      
+      initForms() {
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleLogin();
+        });
+        
+        // Register form
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleRegister();
+        });
+      }
+      
+      async handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const btn = document.getElementById('loginBtn');
+        
+        if (!email || !password) {
+          this.showError('Please fill in all fields');
+          return;
+        }
+        
+        try {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+          
+          await api.login({ email, password });
+          this.showSuccess('Login successful! Redirecting...');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+          
+        } catch (error) {
+          this.showError(error.message || 'Login failed. Please try again.');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        }
+      }
+      
+      async handleRegister() {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const phone = document.getElementById('registerPhone').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+        const locationConsent = document.getElementById('locationConsent').checked;
+        const btn = document.getElementById('registerBtn');
+        
+        if (!name || !email || !password || !confirmPassword) {
+          this.showError('Please fill in all required fields');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          this.showError('Passwords do not match');
+          return;
+        }
+        
+        if (password.length < 6) {
+          this.showError('Password must be at least 6 characters long');
+          return;
+        }
+        
+        try {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+          
+          const userData = {
+            name,
+            email,
+            phone,
+            password
+          };
+          
+          // Get location if consent given
+          if (locationConsent && navigator.geolocation) {
+            try {
+              const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+              });
+              userData.latitude = position.coords.latitude;
+              userData.longitude = position.coords.longitude;
+            } catch (error) {
+              console.warn('Could not get location:', error);
+            }
+          }
+          
+          await api.register(userData);
+          this.showSuccess('Account created successfully! Redirecting...');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+          
+        } catch (error) {
+          this.showError(error.message || 'Registration failed. Please try again.');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        }
+      }
+      
+      async checkExistingSession() {
+        if (api.isAuthenticated()) {
+          try {
+            await api.getProfile();
+            // User is already logged in, redirect to main app
+            window.location.href = 'index.html';
+          } catch (error) {
+            // Session is invalid, clear it
+            await api.logout();
+          }
+        }
+      }
+      
+      showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+      }
+      
+      showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+      }
+      
+      hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+      }
+    }
+    
+    // Initialize the auth app
+    new AuthApp();
+  </script>
+</body>
+</html> 

@@ -3,109 +3,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SafeSphere - Weather & Friend Safety Tracker</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <title>SafeSphere - Safety & Weather Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="logo">
-        <i class="fas fa-shield-alt"></i>
-        <h1>SafeSphere</h1>
-      </div>
-      
-      <div class="safety-status">
-        <h3>Safety Overview</h3>
-        <div class="status-indicator">
-          <div class="status-dot safe"></div>
-          <span>All friends are safe</span>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+          <h1>SafeSphere</h1>
+        </div>
+        <div class="header-actions">
+          <button id="addFriendBtn" class="btn btn-secondary">
+            <i class="fas fa-user-plus"></i> Add Friend
+          </button>
+          <button id="addLocationBtn" class="btn btn-primary">
+            <i class="fas fa-map-marker-alt"></i> Add Location
+          </button>
         </div>
       </div>
-      
-      <div class="friends-list">
-        <h3>Friends & Family</h3>
-        <div id="friendsList"></div>
-      </div>
-      
-      <div class="location-controls">
-        <h3>Important Locations</h3>
-        <button id="addLocationBtn" class="add-btn">
-          <i class="fas fa-plus"></i> Add Location
-        </button>
-        <div id="locationsList"></div>
-      </div>
-    </div>
-    
-    <!-- Main Map Area -->
-    <div id="map"></div>
-    
-    <!-- Emergency Panel -->
-    <div class="emergency-panel">
-      <button id="safeBtn" class="emergency-btn safe">
-        <i class="fas fa-check-circle"></i> I'm Safe
-      </button>
-      <button id="alertBtn" class="emergency-btn alert">
-        <i class="fas fa-bell"></i> Alert Contacts
-      </button>
-    </div>
-    
-    <!-- Layer Controls -->
-    <div class="layer-controls">
-      <h4>Map Layers</h4>
-      <div class="layer-option">
-        <input type="checkbox" id="weatherLayer" checked>
-        <label for="weatherLayer">Weather Radar</label>
-      </div>
-      <div class="layer-option">
-        <input type="checkbox" id="friendsLayer" checked>
-        <label for="friendsLayer">Friends</label>
-      </div>
-      <div class="layer-option">
-        <input type="checkbox" id="locationsLayer" checked>
-        <label for="locationsLayer">Important Locations</label>
-      </div>
-    </div>
-    
-    <!-- Add Location Modal (hidden by default) -->
-    <div id="locationModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>Add Important Location</h2>
-        <form id="locationForm">
-          <div class="form-group">
-            <label for="locationName">Name</label>
-            <input type="text" id="locationName" required>
-          </div>
-          <div class="form-group">
-            <label for="locationType">Type</label>
-            <select id="locationType" required>
-              <option value="home">Home</option>
-              <option value="office">Office</option>
-              <option value="school">School</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Coordinates</label>
-            <div class="coord-inputs">
-              <input type="number" id="locationLat" placeholder="Latitude" step="any" required>
-              <input type="number" id="locationLng" placeholder="Longitude" step="any" required>
-              <button type="button" id="getLocationBtn" class="icon-btn">
-                <i class="fas fa-location-arrow"></i>
-              </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Safety Status -->
+        <section class="safety-status">
+          <h3><i class="fas fa-heart"></i> Safety Overview</h3>
+          <div class="status-card">
+            <div class="status-indicator">
+              <div class="status-dot safe"></div>
+              <span>All friends are safe</span>
+            </div>
+            <div class="status-stats">
+              <div class="stat">
+                <span class="stat-number" id="safeCount">0</span>
+                <span class="stat-label">Safe</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" id="alertCount">0</span>
+                <span class="stat-label">Alerts</span>
+              </div>
             </div>
           </div>
-          <button type="submit" class="submit-btn">Save Location</button>
-        </form>
+        </section>
+
+        <!-- Friends List -->
+        <section class="friends-section">
+          <h3><i class="fas fa-users"></i> Friends & Family</h3>
+          <div class="friends-list" id="friendsList">
+            <!-- Friends will be populated here -->
+          </div>
+        </section>
+
+        <!-- Important Locations -->
+        <section class="locations-section">
+          <h3><i class="fas fa-map-pin"></i> Important Locations</h3>
+          <div class="locations-list" id="locationsList">
+            <!-- Locations will be populated here -->
+          </div>
+        </section>
+
+        <!-- Weather Info -->
+        <section class="weather-section">
+          <h3><i class="fas fa-cloud-sun"></i> Current Weather</h3>
+          <div class="weather-card" id="weatherCard">
+            <!-- Weather data will be populated here -->
+          </div>
+        </section>
+      </aside>
+
+      <!-- Map Container -->
+      <div class="map-container">
+        <div id="map"></div>
+        
+        <!-- Map Controls -->
+        <div class="map-controls">
+          <div class="control-group">
+            <h4>Map Layers</h4>
+            <div class="layer-options">
+              <label class="layer-option">
+                <input type="checkbox" id="weatherLayer" checked>
+                <span>Weather</span>
+              </label>
+              <label class="layer-option">
+                <input type="checkbox" id="friendsLayer" checked>
+                <span>Friends</span>
+              </label>
+              <label class="layer-option">
+                <input type="checkbox" id="locationsLayer" checked>
+                <span>Locations</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Panel -->
+        <div class="emergency-panel">
+          <button id="safeBtn" class="emergency-btn safe">
+            <i class="fas fa-check-circle"></i>
+            <span>I'm Safe</span>
+          </button>
+          <button id="alertBtn" class="emergency-btn alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Send Alert</span>
+          </button>
+        </div>
       </div>
+    </main>
+  </div>
+
+  <!-- Add Friend Modal -->
+  <div id="friendModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-plus"></i> Add Friend</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="friendForm">
+        <div class="form-group">
+          <label for="friendName">Name</label>
+          <input type="text" id="friendName" required>
+        </div>
+        <div class="form-group">
+          <label for="friendEmail">Email</label>
+          <input type="email" id="friendEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="friendPhone">Phone (optional)</label>
+          <input type="tel" id="friendPhone">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelFriendBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Friend</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Location Modal -->
+  <div id="locationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-map-marker-alt"></i> Add Location</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="locationForm">
+        <div class="form-group">
+          <label for="locationName">Name</label>
+          <input type="text" id="locationName" required>
+        </div>
+        <div class="form-group">
+          <label for="locationType">Type</label>
+          <select id="locationType" required>
+            <option value="home">Home</option>
+            <option value="office">Office</option>
+            <option value="school">School</option>
+            <option value="hospital">Hospital</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Coordinates</label>
+          <div class="coord-inputs">
+            <input type="number" id="locationLat" placeholder="Latitude" step="any" required>
+            <input type="number" id="locationLng" placeholder="Longitude" step="any" required>
+            <button type="button" id="getLocationBtn" class="btn btn-secondary">
+              <i class="fas fa-location-arrow"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelLocationBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Location</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading...</span>
     </div>
   </div>
 
   <!-- JavaScript Files -->
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="api.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
