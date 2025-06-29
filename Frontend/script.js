@@ -222,6 +222,7 @@ class SafeSphereApp {
   async loadFriendRequests() {
     try {
       this.friendRequests = await api.getFriendRequests();
+      console.log('Loaded friend requests:', this.friendRequests);
       this.renderFriendRequests();
     } catch (error) {
       console.error('Failed to load friend requests:', error);
@@ -289,6 +290,7 @@ class SafeSphereApp {
   }
 
   renderFriendRequests() {
+    console.log('Rendering friend requests:', this.friendRequests);
     // Add friend requests section to sidebar if there are pending requests
     if (this.friendRequests.length > 0) {
       let requestsSection = document.querySelector('.friend-requests-section');
@@ -303,6 +305,7 @@ class SafeSphereApp {
       requestsList.innerHTML = '';
       
       this.friendRequests.forEach(request => {
+        console.log('Rendering request:', request);
         const requestItem = document.createElement('div');
         requestItem.className = 'friend-request-item';
         requestItem.innerHTML = `
@@ -335,24 +338,26 @@ class SafeSphereApp {
 
   async acceptFriendRequest(requestId) {
     try {
+      console.log('Accepting friend request:', requestId);
       await api.respondToFriendRequest(requestId, 'accept');
       this.showSuccess('Friend request accepted!');
       await this.loadFriendRequests();
       await this.loadFriends();
     } catch (error) {
       console.error('Failed to accept friend request:', error);
-      this.showError('Failed to accept friend request.');
+      this.showError(`Failed to accept friend request: ${error.message}`);
     }
   }
 
   async rejectFriendRequest(requestId) {
     try {
+      console.log('Rejecting friend request:', requestId);
       await api.respondToFriendRequest(requestId, 'reject');
       this.showSuccess('Friend request rejected.');
       await this.loadFriendRequests();
     } catch (error) {
       console.error('Failed to reject friend request:', error);
-      this.showError('Failed to reject friend request.');
+      this.showError(`Failed to reject friend request: ${error.message}`);
     }
   }
 
@@ -793,6 +798,8 @@ class SafeSphereApp {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
   app = new SafeSphereApp();
+  // Make app globally accessible for friend request buttons
+  window.app = app;
 });
 
 // Add CSS animations for notifications

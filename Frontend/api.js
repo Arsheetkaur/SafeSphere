@@ -121,9 +121,12 @@ export async function getFriendRequests() {
 }
 
 export async function respondToFriendRequest(requestId, action) {
-  return await apiCall(`/friends/request/${requestId}/${action}`, {
+  console.log(`Responding to friend request ${requestId} with action: ${action}`);
+  const response = await apiCall(`/friends/request/${requestId}/${action}`, {
     method: 'POST'
   });
+  console.log('Friend request response:', response);
+  return response;
 }
 
 // Location API functions
